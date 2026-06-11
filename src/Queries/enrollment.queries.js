@@ -48,8 +48,8 @@ const getEnrollmentByIdQuery = async (id) => {
 
 const updateEnrollmentQuery = async (id, fields = {}) => {
   const columnMap = {
-    semester_session_id:"semester_session_id",
-    current_status:"current_status"
+    semester_session_id: "semester_session_id",
+    current_status: "current_status",
   };
 
   const setClauses = [];
@@ -79,9 +79,37 @@ const deleteEnrollmentQuery = async (id) => {
   return rows[0];
 };
 
+const getAllStudentOfDepartmentQuery = async (departmentId, conditions) => {
+  const query = `SELECT s.student_id, s.first_name,s.last_name,s.email,d.department_name FROM enrollment e JOIN student s USING(student_id) JOIN course c ON e.course_id=c.course_id JOIN department d ON c.department_id=d.department_id WHERE d.department_id=$1 ORDER BY ${conditions.sortByColumn} ${conditions.sortOrderFinal} OFFSET $2 FETCH FIRST $3 ROW ONLY;`;
+
+  const values = [departmentId, conditions.skip, conditions.limitNumber];
+
+  const { rows } = await pool.query(query, values);
+  return rows;
+};
+
+
+
+const getStudentByCoursesQuery = async (conditions) => {
+  const query = `SELECT c.course_code || '-' || c.course_name AS course, s.student_id, s.first_name, s.last_name, e.enrollment_year FROM enrollment e JOIN student s ON e.student_id=s.student_id JOIN course c ON e.course_id=c.course_id ORDER BY c.course_name ${conditions.sortOrderFinal} OFFSET $1 FETCH FIRST $2 ROW ONLY;`;
+  const values = [conditions.skip, conditions.limitNumber];
+  const { rows } = await pool.query(query, values);
+  return rows;
+};
+
+const getStudentsWithoutEnrollmentQuery = async (conditions) => {
+  const query = `SELECT s.student_id,s.first_name,s.last_name,s.email FROM student s LEFT JOIN enrollment e ON s.student_id=e.student_id WHERE e.* IS NULL ORDER BY ${conditions.sortByColumn} ${conditions.sortOrderFinal} OFFSET $1 FETCH FIRST $2 ROW ONLY;`;
+  const values = [conditions.skip, conditions.limitNUmber];
+  const { rows } = await pool.query(query, values);
+  return rows;
+};
+
 export {
   registerEnrollmentQuery,
   getEnrollmentByIdQuery,
   updateEnrollmentQuery,
   deleteEnrollmentQuery,
+  getAllStudentOfDepartmentQuery,
+  getStudentByCoursesQuery,
+  getStudentsWithoutEnrollmentQuery
 };

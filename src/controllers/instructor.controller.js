@@ -48,6 +48,11 @@ const updateInstructorCourse= asyncHandler(async()=>{
     return res.status(StatusCode.SUCCESS).json(result);
 });
 
+const getInstructorsByDepartment=asyncHandler(async(req,res)=>{
+  const result = await getInstructorsByDepartmentService(req.params);
+  return res.status(StatusCode.SUCCESS).json(result);
+})
+
 export {
   registerInstructor,
   getInstructorById,
@@ -56,5 +61,6 @@ export {
   deactivateInstructor,
   assignInstructorCourse,
   getInstructorCourseById,
-  updateInstructorCourse
+  updateInstructorCourse,
+  getInstructorsByDepartment
 };

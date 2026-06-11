@@ -50,7 +50,7 @@ const updateCourseQuery = async (id, fields = {}) => {
     course_code: "course_code",
     course_name: "course_name",
     credits: "credits",
-    department_id:"department_id"
+    department_id: "department_id",
   };
 
   const setClauses = [];
@@ -80,10 +80,46 @@ const deleteCourseQuery = async (id) => {
   return rows[0];
 };
 
+const getAllCoursesOfDepartmentQuery = async (department_id, conditions) => {
+  const query = `SELECT c.course_code,c.course_name, d.department_name from course c JOIN department d ON c.department_id=d.department_id WHERE d.department_id=$1 ORDER BY ${conditions.sortByColumn} ${conditions.sortOrderFinal} OFFSET $2 FETCH FIRST $3 ROW ONLY;`;
+  const values = [department_id, conditions.skip, conditions.limitNumber];
+  const { rows } = await pool.query(query, values);
+  return rows;
+};
+
+const getCoursesBySemesterQuery = async () => {
+  const query = `SELECT s.semester_no,ss.academic_year,STRING_AGG(c.course_code || '-' || c.course_name,',' ORDER BY course_name) AS courses FROM semester_session ss JOIN course c ON ss.course_id=c.course_id JOIN semester s ON ss.semester_id=s.semester_id GROUP BY (s.semester_no,ss.academic_year) ORDER BY s.semester_no,ss.academic_year;`;
+  const { rows } = await pool.query(query);
+  return rows;
+};
+
+const getCourseFullDetailQuery = async (courseId) => {
+  const query = `SELECT c.course_id, c.course_code, c.course_name, c.credits, d.department_name,i.instructor_id, i.full_name , COUNT(DISTINCT e.student_id) as Student_count FROM enrollment e JOIN course c ON e.course_id=c.course_id JOIN department d ON c.department_id=d.department_id JOIN instructor_course ic ON c.course_id=ic.course_id JOIN instructor i ON ic.instructor_id=i.instructor_id WHERE c.course_id=$1 GROUP BY c.course_id,d.department_name,i.instructor_id;`;
+  const { rows } = await pool.query(query, [courseId]);
+  return rows[0];
+};
+
+const getCourseTaughtByInstructor = async (instructor_id) => {
+  const query = `SELECT c.course_code, c.course_name FROM instructor_course ic JOIN course c ON ic.course_id=c.course_id WHERE ic.instructor_id=$1;`;
+  const { rows } = await pool.query(query, [instructor_id]);
+  return rows;
+};
+
+const getCoursesWithNoInstructorQuery = async () => {
+  const query = `SELECT c.course_code,c.course_name FROM course c LEFT JOIN instructor_course ic ON c.course_id=ic.course_id WHERE ic.* IS NULL;`;
+  const { rows } = await pool.query(query);
+  return rows;
+};
+
 export {
   registerCourseQuery,
   getCourseByIdQuery,
   getAllCourseQuery,
   updateCourseQuery,
   deleteCourseQuery,
+  getAllCoursesOfDepartmentQuery,
+  getCoursesBySemesterQuery,
+  getCourseFullDetailQuery,
+  getCourseTaughtByInstructor,
+  getCoursesWithNoInstructorQuery,
 };

@@ -33,6 +33,7 @@ const deactivateStudent = asyncHandler(async (req, res) => {
   return res.status(StatusCode.SUCCESS).json(result);
 });
 
+
 export {
   registerStudent,
   getStudentById,

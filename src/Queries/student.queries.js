@@ -88,10 +88,11 @@ const deactivateStudentQuery = async (id) => {
   return rows[0];
 };
 
+
 export {
   registerStudentQuery,
   getStudentByIdQuery,
   getAllStudentsQuery,
   updateStudentQuery,
-  deactivateStudentQuery
+  deactivateStudentQuery,
 };

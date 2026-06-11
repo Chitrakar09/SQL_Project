@@ -138,6 +138,14 @@ const unAssignInstructorCourseQuery = async ({ instructor_id, course_id }) => {
   return rows[0];
 };
 
+const getInstructorsByDepartmentQuery = async () => {
+  const query = `SELECT DISTINCT d.department_name, i.full_name AS instructor_name, i.email AS instructor_email FROM course c JOIN department d ON c.department_id=d.department_id JOIN instructor_course ON c.course_id=instructor_course.course_id JOIN instructor i ON instructor_course.instructor_id=i.instructor_id;`; //Suppose John teaches 5 CS courses. Without DISTINCT, you might get: 5 johns. In this query, you get all possible combinations of department and instructors that exists. i.e you will have different instructors for same department
+  const { rows } = await pool.query(query);
+  return rows;
+};
+
+
+
 export {
   registerInstructorQuery,
   getInstructorByIdQuery,
@@ -148,4 +156,5 @@ export {
   getInstructorCourseByIdQuery,
   updateInstructorCourseQuery,
   unAssignInstructorCourseQuery,
+  getInstructorsByDepartmentQuery
 };
