@@ -49,7 +49,7 @@ const updateInstructorCourse= asyncHandler(async()=>{
 });
 
 const getInstructorsByDepartment=asyncHandler(async(req,res)=>{
-  const result = await getInstructorsByDepartmentService(req.params);
+  const result = await getInstructorsByDepartmentService(req.query);
   return res.status(StatusCode.SUCCESS).json(result);
 })
 

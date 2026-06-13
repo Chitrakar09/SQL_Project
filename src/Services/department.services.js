@@ -1,7 +1,19 @@
 import { apiError } from "../utils/apiError";
+import { apiResponse } from "../utils/apiResponse";
 import { StatusCode } from "../constants";
 import { validateRequiredFields } from "../utils/validateRequiredFields";
 import validator from "validator";
+import {
+  registerDepartmentQuery,
+  getDepartmentByIdQuery,
+  getAllDepartmentQuery,
+  updateDepartmentQuery,
+  deleteDepartmentQuery,
+} from "../Queries/department.queries";
+import {
+  getDepartmentStudentCountQuery,
+  countCoursesPerDepartmentQuery,
+} from "../Queries/analytics.queries";
 
 // register department
 const registerDepartmentService = async ({
@@ -9,16 +21,17 @@ const registerDepartmentService = async ({
   building,
   office_number,
 }) => {
-  // validate the fields
   validateRequiredFields({ department_name });
 
   const normalizedDepartmentData = {
     department_name: department_name.trim(),
-    ...(building&&{building:building.trim()}),
-    ...(office_number&&{office_number:office_number.trim()})
+    ...(building && { building: building.trim() }),
+    ...(office_number && { office_number: office_number.trim() }),
   };
 
-  const registeredDepartment = await registerDepartmentQuery(normalizedDepartmentData);
+  const registeredDepartment = await registerDepartmentQuery(
+    normalizedDepartmentData,
+  );
 
   if (!registeredDepartment)
     throw new apiError(
@@ -30,6 +43,24 @@ const registerDepartmentService = async ({
     StatusCode.CREATED,
     registeredDepartment,
     "Department successfully registered",
+  );
+};
+
+const getDepartmentStudentCountService = async () => {
+  const data = await getDepartmentStudentCountQuery();
+  return new apiResponse(
+    StatusCode.SUCCESS,
+    data,
+    "Department student count retrieved successfully",
+  );
+};
+
+const countCoursesPerDepartmentService = async () => {
+  const data = await countCoursesPerDepartmentQuery();
+  return new apiResponse(
+    StatusCode.SUCCESS,
+    data,
+    "Course count per department retrieved successfully",
   );
 };
 
@@ -67,7 +98,7 @@ const getAllDepartmentService = async ({ limit, page, sortOrder, sortBy }) => {
 
   const sortByColumn = sortBy || "department_name";
   const sortOrderFinal =
-    sortOrder && sortOrder.toLowerCase === "desc" ? "DESC" : "ASC";
+    sortOrder && sortOrder.toLowerCase() === "desc" ? "DESC" : "ASC";
 
   const departments = await getAllDepartmentQuery({
     limitNumber,
@@ -100,7 +131,7 @@ const getAllDepartmentService = async ({ limit, page, sortOrder, sortBy }) => {
     {
       departments,
       pagination: {
-        totalDepartments:departments[0].total_count,
+        totalDepartments: departments[0].total_count,
         totalPages,
         currentPage: pageNumber,
         limit: limitNumber,
@@ -114,14 +145,14 @@ const getAllDepartmentService = async ({ limit, page, sortOrder, sortBy }) => {
 
 // update student service
 const updateDepartmentService = async (id, updates = {}) => {
-  const { department_name,building,office_number } = updates;
+  const { department_name, building, office_number } = updates;
   if (!validator.isUUID(id))
     throw new apiError(StatusCode.BAD_REQUEST, "Invalid UUID");
 
   const normalized = {
-   ...(department_name&&{department_name: department_name.trim()}),
-    ...(building&&{building:building.trim()}),
-    ...(office_number&&{office_number:office_number.trim()})
+    ...(department_name && { department_name: department_name.trim() }),
+    ...(building && { building: building.trim() }),
+    ...(office_number && { office_number: office_number.trim() }),
   };
 
   const updatedDepartment = await updateDepartmentQuery(id, normalized);
@@ -142,16 +173,22 @@ const deleteDepartmentService = async (id) => {
     throw new apiError(StatusCode.BAD_REQUEST, "Invalid UUID");
   const deleted = await deleteDepartmentQuery(id);
   if (!deleted)
-    throw new apiError(
-      StatusCode.NOT_FOUND,
-      "Department not found",
-    );
+    throw new apiError(StatusCode.NOT_FOUND, "Department not found");
 
   return new apiResponse(
     StatusCode.SUCCESS,
-    deactivated,
+    deleted,
     "Department deleted successfully",
   );
 };
 
-export {registerDepartmentService, getAllDepartmentService, getDepartmentByIdService,updateDepartmentService,deleteDepartmentService}
+
+export {
+  registerDepartmentService,
+  getAllDepartmentService,
+  getDepartmentByIdService,
+  updateDepartmentService,
+  deleteDepartmentService,
+  getDepartmentStudentCountService,
+  countCoursesPerDepartmentService,
+}

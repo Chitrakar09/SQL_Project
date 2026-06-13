@@ -9,10 +9,13 @@ import {
   getAllInstructorsQuery,
   updateInstructorQuery,
   deactivateInstructorQuery,
+  assignInstructorCourseQuery,
+  getInstructorCourseByIdQuery,
+  updateInstructorCourseQuery,
+  unAssignInstructorCourseQuery,
+  getInstructorsByDepartmentQuery,
 } from "../Queries/instructor.queries.js";
 import { apiResponse } from "../utils/apiResponse.js";
-import { unAssignInstructorCourseQuery } from "../Queries/instructor.queries.js";
-validateRequiredFields;
 
 // register instructor service
 const registerInstructorService = async ({
@@ -196,11 +199,15 @@ const deactivateInstructorService = async (id) => {
   );
 };
 
-const assignInstructorCourseService = async ({ instructor_email, course_code }) => {
+const assignInstructorCourseService = async ({
+  instructor_email,
+  course_code,
+}) => {
   // validate the fields
   validateRequiredFields({ instructor_email, course_code });
 
- if(!(isValidEmail(instructor_email))) throw new apiError(StatusCode.BAD_REQUEST,"Invalid email type")
+  if (!isValidEmail(instructor_email))
+    throw new apiError(StatusCode.BAD_REQUEST, "Invalid email type");
   const normalizedData = {
     instructor_email,
     course_code,
@@ -233,7 +240,7 @@ const getInstructorCourseByIdService = async (id) => {
 
   return new apiResponse(
     StatusCode.SUCCESS,
-    instructor,
+    instructorCourses,
     "Courses assigned to instructor retrieved",
   );
 };
@@ -246,8 +253,8 @@ const updateInstructorCourseService = async (id, updates = {}) => {
   if (
     !(
       validator.isUUID(id) &&
-      validator(updatedCourseId) &&
-      validator(toBeUpdatedCourseId)
+      validator.isUUID(updatedCourseId) &&
+      validator.isUUID(toBeUpdatedCourseId)
     )
   )
     throw new apiError(StatusCode.BAD_REQUEST, "Invalid UUID");
@@ -257,9 +264,10 @@ const updateInstructorCourseService = async (id, updates = {}) => {
     updatedCourseId,
   };
 
+  let updatedInstructorCourse;
+
   try {
-    const updatedInstructor = await updateInstructorCourseQuery(id, normalized);
-    const updatedInstructor = await updateInstructorCourseQuery(id, normalized);
+    updatedInstructorCourse = await updateInstructorCourseQuery(id, normalized);
   } catch (error) {
     if (error.code === "23505") {
       throw new apiError(
@@ -267,6 +275,7 @@ const updateInstructorCourseService = async (id, updates = {}) => {
         "Course is already assigned to the instructor",
       );
     }
+    throw error;
   }
 
   if (!updatedInstructorCourse)
@@ -277,13 +286,81 @@ const updateInstructorCourseService = async (id, updates = {}) => {
 
   return new apiResponse(
     StatusCode.SUCCESS,
-    updatedInstructor,
+    updatedInstructorCourse,
     "Instructor course updated",
   );
 };
 
-const unAssignInstructorCourseService= async({instructorId,courseId})=>{
-    validateRequiredFields({ instructorId, courseId });
+// TODO: pagination required
+const getInstructorsByDepartmentService = async (
+  { limit, page, sortOrder, sortBy },
+) => {
+
+  const pageNumber = parseInt(page, 10) || 1;
+  const limitNumber = parseInt(limit, 10) || 10;
+  if (pageNumber < 1 || isNaN(pageNumber))
+    throw new apiError(400, "Invalid Page number");
+
+  if (limitNumber < 1 || isNaN(limitNumber))
+    throw new apiError(400, "Invalid limit");
+
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const allowedSortFields = [
+    "d.department_name",
+  ];
+
+  if (sortBy && !allowedSortFields.includes(sortBy)) {
+    throw new apiError(StatusCode.BAD_REQUEST, "Invalid sort field");
+  }
+
+  const sortByColumn = sortBy || "d.department_name";
+  const sortOrderFinal =
+    sortOrder && sortOrder.toLowerCase === "desc" ? "DESC" : "ASC";
+
+  const instructors = await getInstructorsByDepartmentQuery({
+    limitNumber,
+    skip,
+    sortByColumn,
+    sortOrderFinal,
+  });
+
+ if (!instructors) {
+    return new apiResponse(
+      StatusCode.SUCCESS,
+      {
+        instructors,
+        pagination: {
+          totalPages: 0,
+          currentPage: pageNumber,
+          limit: limitNumber,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+      },
+      "No instructors found",
+    );
+  }
+  const totalPages = Math.ceil(instructors[0].total_count / limitNumber);
+
+  return new apiResponse(
+    StatusCode.SUCCESS,
+    {
+      instructors,
+      pagination: {
+        totalPages,
+        currentPage: pageNumber,
+        limit: limitNumber,
+        hasNextPage: pageNumber < totalPages,
+        hasPrevPage: pageNumber > 1,
+      },
+    },
+    "Instructors retrieved successfully",
+  );
+};
+
+const unAssignInstructorCourseService = async ({ instructorId, courseId }) => {
+  validateRequiredFields({ instructorId, courseId });
 
   if (!(validator.isUUID(instructorId) && validator.isUUID(courseId)))
     throw new apiError(StatusCode.BAD_REQUEST, "Invalid UUID");
@@ -294,14 +371,18 @@ const unAssignInstructorCourseService= async({instructorId,courseId})=>{
   };
 
   const unAssigned = await unAssignInstructorCourseQuery(normalizedData);
-  if (!unAssigned) throw new apiError(StatusCode.NOT_FOUND, "Instructor with the specified Course not found");
+  if (!unAssigned)
+    throw new apiError(
+      StatusCode.NOT_FOUND,
+      "Instructor with the specified Course not found",
+    );
 
   return new apiResponse(
     StatusCode.SUCCESS,
     unAssigned,
     "unAssigned course successfully",
   );
-}
+};
 
 export {
   registerInstructorService,
@@ -309,4 +390,5 @@ export {
   getAllInstructorsService,
   updateInstructorService,
   deactivateInstructorService,
+  getInstructorsByDepartmentService,
 };

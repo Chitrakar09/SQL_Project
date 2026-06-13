@@ -81,7 +81,7 @@ const deleteCourseQuery = async (id) => {
 };
 
 const getAllCoursesOfDepartmentQuery = async (department_id, conditions) => {
-  const query = `SELECT c.course_code,c.course_name, d.department_name from course c JOIN department d ON c.department_id=d.department_id WHERE d.department_id=$1 ORDER BY ${conditions.sortByColumn} ${conditions.sortOrderFinal} OFFSET $2 FETCH FIRST $3 ROW ONLY;`;
+  const query = `SELECT c.course_code,c.course_name, d.department_name, COUNT(*) OVER() AS total_count from course c JOIN department d ON c.department_id=d.department_id WHERE d.department_id=$1 ORDER BY ${conditions.sortByColumn} ${conditions.sortOrderFinal} OFFSET $2 FETCH FIRST $3 ROW ONLY;`;
   const values = [department_id, conditions.skip, conditions.limitNumber];
   const { rows } = await pool.query(query, values);
   return rows;

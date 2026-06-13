@@ -26,21 +26,19 @@ import departmentRouter from "./routes/department.routes.js";
 import courseRouter from "./routes/course.routes.js";
 import instructorRouter from "./routes/instructor.routes.js";
 import semesterRouter from "./routes/semester.routes.js";
-import enrollmentRouter from "./routes/enrollment.js";
+import enrollmentRouter from "./routes/enrollment.routes.js";
 
 // routes for students
 app.use("/api/v1/student", studentRouter);
-// routes for instructors
-// app.use("/api/v1/instructor");
 // routes for departments
 app.use("/api/v1/department", departmentRouter);
 // routes for courses
 app.use("/api/v1/course", courseRouter);
 // routes for enrollments
-app.use("/api/v1/enrollments");
-// routes for instructor
+app.use("/api/v1/enrollments", enrollmentRouter);
+// routes for instructors
 app.use("/api/v1/instructors", instructorRouter);
 // routes for semester
-app.use("/api/v1/semester");
+app.use("/api/v1/semester", semesterRouter);
 
 export { app };

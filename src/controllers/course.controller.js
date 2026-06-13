@@ -27,7 +27,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
 });
 
 const getAllCourseOfDepartment = asyncHandler(async (req, res) => {
-  const result = await getAllCourseOfDepartmentService(req.params);
+  const result = await getAllCourseOfDepartmentService(req.params,req.query);
   return res.status(StatusCode.SUCCESS).json(result);
 });
 
@@ -47,12 +47,12 @@ const getCoursesTaughtByInstructor = asyncHandler(async (req, res) => {
 });
 
 const getMostPopularCourse = asyncHandler(async (req, res) => {
-  const result = await getMostPopularCourseService(req.params);
+  const result = await getMostPopularCourseService();
   return res.status(StatusCode.SUCCESS).json(result);
 });
 
 const getCoursesWithNoInstructor = asyncHandler(async (req, res) => {
-  const result = await getCoursesWithNoInstructorService(req.params);
+  const result = await getCoursesWithNoInstructorService();
   return res.status(StatusCode.SUCCESS).json(result);
 });
 

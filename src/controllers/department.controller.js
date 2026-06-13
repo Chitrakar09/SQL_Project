@@ -27,7 +27,7 @@ const deleteDepartment = asyncHandler(async (req, res) => {
 });
 
 const getDepartmentStudentCount = asyncHandler(async (req, res) => {
-  const result = await getDepartmentStudentCountService(req.params);
+  const result = await getDepartmentStudentCountService();
   return res.status(StatusCode.SUCCESS).json(result);
 });
 

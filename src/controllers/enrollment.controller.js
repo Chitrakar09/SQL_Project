@@ -28,7 +28,7 @@ const deactivateEnrollment = asyncHandler(async (req, res) => {
 });
 
 const getStudentsOfDepartment=asyncHandler(async(req,res)=>{
-  const result = await getStudentsOfDepartmentService(req.params);
+  const result = await getStudentsOfDepartmentService(req.params,req.query);
   return res.status(StatusCode.SUCCESS).json(result);
 })
 
@@ -38,12 +38,17 @@ const countStudentsPerDepartment=asyncHandler(async(req,res)=>{
 })
 
 const getStudentsByCourses=asyncHandler(async(req,res)=>{
-  const result = await getStudentsByCoursesService(req.params);
+  const result = await getStudentsByCoursesService(req.query);
+  return res.status(StatusCode.SUCCESS).json(result);
+})
+
+const getStudentsOfCourse=asyncHandler(async(req,res)=>{
+  const result = await getStudentsOfCourseService(req.params,req.query);
   return res.status(StatusCode.SUCCESS).json(result);
 })
 
 const getStudentsWithoutEnrollment=asyncHandler(async(req,res)=>{
-  const result = await getStudentsWithoutEnrollmentService(req.params);
+  const result = await getStudentsWithoutEnrollmentService(req.query);
   return res.status(StatusCode.SUCCESS).json(result);
 })
 
@@ -55,5 +60,6 @@ export {
   getStudentsOfDepartment,
   countStudentsPerDepartment,
   getStudentsByCourses,
-  getStudentsWithoutEnrollment
+  getStudentsWithoutEnrollment,
+  getStudentsOfCourse
 };
