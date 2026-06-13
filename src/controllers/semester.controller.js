@@ -1,5 +1,16 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import { StatusCode } from "../constants";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { StatusCode } from "../constants.js";
+import {
+  registerSemesterService,
+  registerSemesterSessionService,
+  getSemesterByIdService,
+  getAllSemesterService,
+  updateSemesterService,
+  deleteSemesterService,
+  getSemesterSessionByIdService,
+  updateSemesterSessionService,
+  deleteSemesterSessionService,
+} from "../Services/semester.services.js";
 
 const createSemester = asyncHandler(async (req, res) => {
   const result = await registerSemesterService(req.body);
@@ -32,7 +43,7 @@ const createSemesterSession = asyncHandler(async (req, res) => {
 });
 
 const getSemesterSessionById = asyncHandler(async (req, res) => {
-  const result = await getSemesterByIdService(req.params.id);
+  const result = await getSemesterSessionByIdService(req.params.id);
   return res.status(StatusCode.SUCCESS).json(result);
 });
 

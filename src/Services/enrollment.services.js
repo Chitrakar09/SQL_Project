@@ -1,7 +1,7 @@
-import { apiError } from "../utils/apiError";
-import { apiResponse } from "../utils/apiResponse";
-import { StatusCode } from "../constants";
-import { validateRequiredFields } from "../utils/validateRequiredFields";
+import { apiError } from "../utils/apiError.js";
+import { apiResponse } from "../utils/apiResponse.js";
+import { StatusCode } from "../constants.js";
+import { validateRequiredFields } from "../utils/validateRequiredFields.js";
 import validator from "validator";
 import {
   registerEnrollmentQuery,
@@ -11,8 +11,8 @@ import {
   getAllStudentOfDepartmentQuery,
   getStudentByCoursesQuery,
   getStudentsWithoutEnrollmentQuery,
-} from "../Queries/enrollment.queries";
-import { getStudentCountPerDepartmentQuery } from "../Queries/analytics.queries";
+} from "../Queries/enrollment.queries.js";
+import { getStudentCountPerDepartmentQuery } from "../Queries/analytics.queries.js";
 
 // register enrollment
 const registerEnrollmentService = async ({

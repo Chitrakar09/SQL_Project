@@ -37,7 +37,7 @@ app.use("/api/v1/course", courseRouter);
 // routes for enrollments
 app.use("/api/v1/enrollments", enrollmentRouter);
 // routes for instructors
-app.use("/api/v1/instructors", instructorRouter);
+app.use("/api/v1/instructor", instructorRouter);
 // routes for semester
 app.use("/api/v1/semester", semesterRouter);
 

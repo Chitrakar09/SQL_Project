@@ -1,7 +1,7 @@
-import { apiError } from "../utils/apiError";
-import { apiResponse } from "../utils/apiResponse";
-import { StatusCode } from "../constants";
-import { validateRequiredFields } from "../utils/validateRequiredFields";
+import { apiError } from "../utils/apiError.js";
+import { apiResponse } from "../utils/apiResponse.js";
+import { StatusCode } from "../constants.js";
+import { validateRequiredFields } from "../utils/validateRequiredFields.js";
 import validator from "validator";
 import {
   registerSemesterQuery,
@@ -9,11 +9,10 @@ import {
   getAllSemesterQuery,
   updateSemesterQuery,
   deleteSemesterQuery,
-  registerSemesterSessionQuery,
-  getSemesterSessionByIdQuery,
-  getAllSemesterSessionQuery,
-  updateSemesterSessionQuery,
-  deleteSemesterSessionQuery,
+  registerSemester_sessionQuery,
+  getSemester_sessionByIdQuery,
+  updateSemester_sessionQuery,
+  deleteSemester_sessionQuery,
 } from "../Queries/semester.queries.js";
 
 const normalizeSemesterNumber = (value) => {
@@ -208,7 +207,7 @@ const registerSemesterSessionService = async ({
     course_id,
   };
 
-  const registeredSemesterSession = await registerSemesterSessionQuery(
+  const registeredSemesterSession = await registerSemester_sessionQuery(
     normalizedSemesterSessionData,
   );
   if (!registeredSemesterSession) {
@@ -230,7 +229,7 @@ const getSemesterSessionByIdService = async (id) => {
     throw new apiError(StatusCode.BAD_REQUEST, "Invalid UUID");
   }
 
-  const session = await getSemesterSessionByIdQuery(id);
+  const session = await getSemester_sessionByIdQuery(id);
   if (!session)
     throw new apiError(StatusCode.NOT_FOUND, "Semester session not found");
 
@@ -273,7 +272,7 @@ const updateSemesterSessionService = async (id, updates = {}) => {
     ...(end_date !== undefined && { end_date: normalizeDate(end_date) }),
   };
 
-  const updatedSession = await updateSemesterSessionQuery(id, normalized);
+  const updatedSession = await updateSemester_sessionQuery(id, normalized);
   if (!updatedSession)
     throw new apiError(StatusCode.NOT_FOUND, "Semester session not found");
 
@@ -290,7 +289,7 @@ const deleteSemesterSessionService = async (id) => {
     throw new apiError(StatusCode.BAD_REQUEST, "Invalid UUID");
   }
 
-  const deleted = await deleteSemesterSessionQuery(id);
+  const deleted = await deleteSemester_sessionQuery(id);
   if (!deleted) throw new apiError(StatusCode.NOT_FOUND, "Semester session not found");
 
   return new apiResponse(

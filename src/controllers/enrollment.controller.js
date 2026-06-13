@@ -4,7 +4,12 @@ import {
   registerEnrollmentService,
   getEnrollmentByIdService,
   updateEnrollmentService,
-  deactivateEnrollmentService,
+  deleteEnrollmentService,
+  getStudentsByCoursesService,
+  getStudentsOfDepartmentService,
+  countStudentsPerDepartmentService,
+  getStudentsOfCourseService,
+  getStudentsWithoutEnrollmentService
 } from "../Services/enrollment.services.js";
 
 const registerEnrollment = asyncHandler(async (req, res) => {
@@ -23,7 +28,7 @@ const updateEnrollment = asyncHandler(async (req, res) => {
 });
 
 const deactivateEnrollment = asyncHandler(async (req, res) => {
-  const result = await deactivateEnrollmentService(req.params.id);
+  const result = await deleteEnrollmentService(req.params.id);
   return res.status(StatusCode.SUCCESS).json(result);
 });
 

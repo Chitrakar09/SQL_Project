@@ -1,5 +1,18 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import { StatusCode } from "../constants";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { StatusCode } from "../constants.js";
+import {
+  registerCourseService,
+  getCourseByIdService,
+  getAllCourseService,
+  updateCourseService,
+  deleteCourseService,
+  getAllCourseOfDepartmentService,
+  getCoursesBySemesterService,
+  getCourseFullDetailsService,
+  getCoursesTaughtByInstructorService,
+  getCoursesWithNoInstructorService,
+  getMostPopularCourseService,
+} from "../Services/course.services.js";
 
 const registerCourse = asyncHandler(async (req, res) => {
   const result = await registerCourseService(req.body);
@@ -27,7 +40,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
 });
 
 const getAllCourseOfDepartment = asyncHandler(async (req, res) => {
-  const result = await getAllCourseOfDepartmentService(req.params,req.query);
+  const result = await getAllCourseOfDepartmentService(req.params, req.query);
   return res.status(StatusCode.SUCCESS).json(result);
 });
 

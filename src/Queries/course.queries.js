@@ -76,8 +76,8 @@ const updateCourseQuery = async (id, fields = {}) => {
 
 const deleteCourseQuery = async (id) => {
   const query = `DELETE FROM course WHERE course_id=$1;`;
-  const { rows } = await pool.query(query, [id]);
-  return rows[0];
+  const { rowCount } = await pool.query(query, [id]);
+  return rowCount;
 };
 
 const getAllCoursesOfDepartmentQuery = async (department_id, conditions) => {

@@ -1,5 +1,13 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import { StatusCode } from "../constants";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { StatusCode } from "../constants.js";
+import {
+  registerDepartmentService,
+  getAllDepartmentService,
+  getDepartmentByIdService,
+  updateDepartmentService,
+  deleteDepartmentService,
+  getDepartmentStudentCountService,
+} from "../Services/department.services.js";
 
 const registerDepartment = asyncHandler(async (req, res) => {
   const result = await registerDepartmentService(req.body);

@@ -1,7 +1,7 @@
-import { apiError } from "../utils/apiError";
-import { apiResponse } from "../utils/apiResponse";
-import { StatusCode } from "../constants";
-import { validateRequiredFields } from "../utils/validateRequiredFields";
+import { apiError } from "../utils/apiError.js";
+import { apiResponse } from "../utils/apiResponse.js";
+import { StatusCode } from "../constants.js";
+import { validateRequiredFields } from "../utils/validateRequiredFields.js";
 import validator from "validator";
 import {
   registerDepartmentQuery,
@@ -9,11 +9,11 @@ import {
   getAllDepartmentQuery,
   updateDepartmentQuery,
   deleteDepartmentQuery,
-} from "../Queries/department.queries";
+} from "../Queries/department.queries.js";
 import {
   getDepartmentStudentCountQuery,
   countCoursesPerDepartmentQuery,
-} from "../Queries/analytics.queries";
+} from "../Queries/analytics.queries.js";
 
 // register department
 const registerDepartmentService = async ({

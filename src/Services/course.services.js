@@ -1,7 +1,7 @@
-import { apiError } from "../utils/apiError";
-import { apiResponse } from "../utils/apiResponse";
-import { StatusCode } from "../constants";
-import { validateRequiredFields } from "../utils/validateRequiredFields";
+import { apiError } from "../utils/apiError.js";
+import { apiResponse } from "../utils/apiResponse.js";
+import { StatusCode } from "../constants.js";
+import { validateRequiredFields } from "../utils/validateRequiredFields.js";
 import validator from "validator";
 import {
   registerCourseQuery,
@@ -14,8 +14,8 @@ import {
   getCourseFullDetailQuery,
   getCourseTaughtByInstructor,
   getCoursesWithNoInstructorQuery,
-} from "../Queries/course.queries";
-import { getMostPopularCourseQuery } from "../Queries/analytics.queries";
+} from "../Queries/course.queries.js";
+import { getMostPopularCourseQuery } from "../Queries/analytics.queries.js";
 
 // register course
 const registerCourseService = async ({
@@ -24,6 +24,7 @@ const registerCourseService = async ({
   credits,
   department_id,
 }) => {
+
   validateRequiredFields({ courseCode, courseName, credits });
 
   const normalizedCourseData = {

@@ -62,8 +62,8 @@ const updateDepartmentQuery = async (id, fields = {}) => {
 
 const deleteDepartmentQuery = async (id) => {
   const query = `DELETE FROM department WHERE department_id=$1;`;
-  const { rows } = await pool.query(query, [id]);
-  return rows[0];
+  const { rowCount } = await pool.query(query, [id]);
+  return rowCount;
 };
 
 export {

@@ -1,4 +1,4 @@
-import { pool } from "../db";
+import { pool } from "../db/index.js";
 
 const getMostPopularCourseQuery = async () => {
   const query = `SELECT c.course_code,c.course_name,COUNT( * ) AS enrollment_count
@@ -34,4 +34,5 @@ export {
   getMostPopularCourseQuery,
   getDepartmentStudentCountQuery,
   getStudentCountPerDepartmentQuery,
+  countCoursesPerDepartmentQuery
 };

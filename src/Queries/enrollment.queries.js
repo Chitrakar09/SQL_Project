@@ -75,8 +75,8 @@ const updateEnrollmentQuery = async (id, fields = {}) => {
 
 const deleteEnrollmentQuery = async (id) => {
   const query = `DELETE FROM enrollment WHERE enrollment_id=$1;`;
-  const { rows } = await pool.query(query, [id]);
-  return rows[0];
+  const { rowCount } = await pool.query(query, [id]);
+  return rowCount;
 };
 
 const getAllStudentOfDepartmentQuery = async (departmentId, conditions) => {
